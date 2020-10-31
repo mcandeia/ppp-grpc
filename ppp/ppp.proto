@@ -1,2 +1,74 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option go_package = "mcandeia/grpc/ppp";
+
+package ppp;
+// Implementation of https://developers.vtex.com/vtex-developer-docs/reference/payment-flow#manifest-1
+
 service PaymentProvider {
+    // Exposes provider manifest, a range of metadata settings, like payment methods, split configuration and custom fields.
+
+    rpc GetManifest(google.protobuf.Empty) returns (Manifest) {}
+}
+// More on https://developers.vtex.com/vtex-developer-docs/reference/payment-flow#manifest-1
+enum PaymentMethodName {
+    Visa = 0;
+    Mastercard = 1;
+    AmericanExpress = 2;
+    Discover = 3;
+    JCB = 4;
+    Diners = 5;
+    Elo = 6;
+    Hipercard = 7;
+    Aura = 8;
+    Banricompras = 9;
+    Credz = 10;
+    VirtualDebitElo = 11;
+    Cabal = 12;
+    VisaElectron = 13;
+    Maestro = 14;
+    MastercardDebit = 15;
+    Cobranded = 16;
+    Privatelabels = 17;
+    Promissories = 18;
+    Cash = 19;
+    BankInvoice = 20;
+    Pix = 21;
+    SPEI = 22;
+    Safetypay = 23;
+    Bitcoin = 24;
+}
+
+enum SplitStage {
+    onAuthorize = 0;
+    onCapture = 1;
+    disabled = 2;
+}
+
+message PaymentMethod {
+    PaymentMethodName name = 1; // Payment method name
+    SplitStage allowsSplit = 2; // Describes which transaction flow stage the connector should receive payment split data . Accepted values: onAuthorize, onCapture, disabled
+}
+
+enum CustomFieldType {
+    select = 0;
+    text = 1;
+}
+// In case of select type, the possible params are text and value
+message SelectFieldOption {
+    string text = 1;
+    string value = 2;
+}
+
+message CustomField {
+    string name = 1; // Custom field name
+    CustomFieldType type = 2; // Custom field type. Accepted values: text, select
+}
+
+message Manifest {
+    repeated PaymentMethod paymentMethods = 1; // Describes each payment method supported by payment provider and exposed its respective metadata
+    repeated CustomField customFields = 2; // Describes the customized fields supported by the connector
+    repeated SelectFieldOption options = 3; // In case of select type, the possible params are text and value
 }
