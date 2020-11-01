@@ -28,7 +28,7 @@ import (
 	"log"
 	"time"
 
-	ppp "github.com/mcandeia/ppp-grpc/proto"
+	ppp "github.com/mcandeia/ppp-grpc/ppp"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
