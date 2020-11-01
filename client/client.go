@@ -28,7 +28,7 @@ import (
 	"log"
 	"time"
 
-	ppp "mcandeia/grpc/ppp"
+	ppp "github.com/mcandeia/ppp-grpc/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -56,5 +56,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("fail to get manifest: %v", err)
 	}
-	log.Println(manifest.PaymentMethods[0].Name)
+	log.Println(manifest.PaymentMethods[0].AllowsSplit)
 }

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 
-option go_package = "mcandeia/grpc/ppp";
+option go_package = "github.com/mcandeia/ppp-grpc/proto";
 
 package ppp;
 // Implementation of https://developers.vtex.com/vtex-developer-docs/reference/payment-flow#manifest-1

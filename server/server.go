@@ -7,9 +7,10 @@ import (
 	"log"
 	"net"
 
-	ppp "mcandeia/grpc/ppp"
+	ppp "github.com/mcandeia/ppp-grpc/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 var port = 10000
@@ -21,8 +22,9 @@ type paymentProviderServer struct {
 // GetFeature returns the feature at the given point.
 func (s *paymentProviderServer) GetManifest(ctx context.Context, empty *emptypb.Empty) (*ppp.Manifest, error) {
 	// No feature was found, return an unnamed feature
-	paymentMethods := ppp.PaymentMethod { AllowsSplit: ppp.SplitStage_onAuthorize, Name: ppp.PaymentMethodName_BankInvoice  }
-	return &ppp.Manifest { PaymentMethods: []*ppp.PaymentMethod{&paymentMethods} }, nil
+	bankInvoice := ppp.PaymentMethod { AllowsSplit: ppp.SplitStage_onAuthorize, Name: ppp.PaymentMethodName_BankInvoice  }
+	visa := ppp.PaymentMethod { AllowsSplit: ppp.SplitStage_onAuthorize, Name: ppp.PaymentMethodName_Visa }
+	return &ppp.Manifest { PaymentMethods: []*ppp.PaymentMethod{&visa, &bankInvoice} }, nil
 }
 func newServer() *paymentProviderServer {
 	s := &paymentProviderServer{}
@@ -37,6 +39,7 @@ func main() {
 	}
     log.Println("Running...")
 	grpcServer := grpc.NewServer()
+	reflection.Register(grpcServer)
 	ppp.RegisterPaymentProviderServer(grpcServer, newServer())
 	grpcServer.Serve(lis)
 }

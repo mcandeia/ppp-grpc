@@ -1,4 +1,4 @@
-module mcandeia/grpc/ppp
+module github.com/mcandeia/ppp-grpc/proto
 
 go 1.15
 
