@@ -38,6 +38,22 @@ var (
 	serverAddr         = flag.String("server_addr", "localhost:10000", "The server address in the format of host:port")
 )
 
+func getManifest(client ppp.PaymentProviderClient)<- chan *ppp.Manifest {
+	manifestChan := make(chan *ppp.Manifest)
+	go func() {
+		defer close(manifestChan)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		manifest, err := client.GetManifest(ctx, &emptypb.Empty{})
+		if err != nil {
+			log.Fatalf("fail to get manifest: %v", err)
+		}
+		manifestChan <- manifest
+	}()
+
+	return manifestChan
+
+}
 func main() {
 	var opts []grpc.DialOption
 
@@ -49,12 +65,6 @@ func main() {
 	}
 	defer conn.Close()
 	client := ppp.NewPaymentProviderClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	manifest, err := client.GetManifest(ctx, &emptypb.Empty{})
-
-	if err != nil {
-		log.Fatalf("fail to get manifest: %v", err)
-	}
+	manifest := <- getManifest(client)
 	log.Println(manifest.PaymentMethods[0].AllowsSplit)
 }

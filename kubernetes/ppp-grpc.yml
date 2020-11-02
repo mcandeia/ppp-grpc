@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: ppp-grpc
-          image: 462942818386.dkr.ecr.us-east-1.amazonaws.com/ppp-grpc:latest
+          image: __IMAGE__@__DIGEST__
           ports:
             - containerPort: 10000
               name: grpc
