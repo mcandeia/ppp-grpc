@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: ppp-grpc
 spec:
-  clusterIP: None
   selector:
     k8s-app: ppp-grpc
   ports:
     - port: 10000
+      targetPort: 10000
       name: grpc
 ---
 apiVersion: apps/v1
@@ -17,7 +17,7 @@ metadata:
   labels:
     k8s-app: ppp-grpc
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       k8s-app: ppp-grpc
