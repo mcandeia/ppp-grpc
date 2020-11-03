@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: ppp-grpc
 spec:
+  clusterIP: None
   selector:
     k8s-app: ppp-grpc
   ports:

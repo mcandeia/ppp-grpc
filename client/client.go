@@ -35,36 +35,26 @@ import (
 )
 
 var (
-	serverAddr         = flag.String("server_addr", "localhost:10000", "The server address in the format of host:port")
+	serverAddr         = flag.String("server_addr", "ppp.marcos-candeia.com:443", "The server address in the format of host:port")
 )
 
-func getManifest(client ppp.PaymentProviderClient)<- chan *ppp.Manifest {
-	manifestChan := make(chan *ppp.Manifest)
-	go func() {
-		defer close(manifestChan)
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		manifest, err := client.GetManifest(ctx, &emptypb.Empty{})
-		if err != nil {
-			log.Fatalf("fail to get manifest: %v", err)
-		}
-		manifestChan <- manifest
-	}()
-
-	return manifestChan
-
-}
 func main() {
 	var opts []grpc.DialOption
-
+	opts = append(opts, grpc.WithTimeout(10 * time.Second))
 	opts = append(opts, grpc.WithInsecure())
 	opts = append(opts, grpc.WithBlock())
 	conn, err := grpc.Dial(*serverAddr, opts...)
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)
 	}
+	log.Println("Dial finished.")
 	defer conn.Close()
 	client := ppp.NewPaymentProviderClient(conn)
-	manifest := <- getManifest(client)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	manifest, err := client.GetManifest(ctx, &emptypb.Empty{})
+	if err != nil {
+		log.Fatalf("fail to get manifest: %v", err)
+	}
 	log.Println(manifest.PaymentMethods[0].AllowsSplit)
 }
