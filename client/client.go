@@ -41,6 +41,7 @@ var (
 func main() {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithTimeout(10 * time.Second))
+	opts = append(opts, grpc.WithUserAgent("Go client locally"))
 	opts = append(opts, grpc.WithInsecure())
 	opts = append(opts, grpc.WithBlock())
 	conn, err := grpc.Dial(*serverAddr, opts...)

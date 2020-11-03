@@ -33,3 +33,8 @@ spec:
           ports:
             - containerPort: 10000
               name: grpc
+          env:
+            - name: GRPC_PORT
+              value: "10000"
+            - name: SVC_NAME
+              value: ppp-grpc
